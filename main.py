@@ -4,9 +4,23 @@ from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import StreamingResponse
 from langdetect import detect
 from google.cloud import texttospeech
+import json
 
-# Set credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "W:\HacktivSpace\ml_backend\edza-451010-8c0085628b62.json"
+# Retrieve credentials directly from GOOGLE_APPLICATION_CREDENTIALS
+credentials_json_string = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+
+if not credentials_json_string:
+    raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable not set.")
+
+credentials_json = json.loads(credentials_json_string)
+
+# Save credentials to a temporary file
+credentials_file = "/tmp/gcloud-credentials.json"
+with open(credentials_file, "w") as f:
+    json.dump(credentials_json, f)
+
+# Set the GOOGLE_APPLICATION_CREDENTIALS environment variable to the temp file's path
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_file
 
 # Mapping language codes to Google TTS voices
 LANGUAGE_TO_VOICE = {
