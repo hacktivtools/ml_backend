@@ -38,6 +38,11 @@ LANGUAGE_TO_VOICE = {
 
 app = FastAPI()
 
+@app.get("/health")
+def health_check():
+    """Endpoint to check if the server is running."""
+    return {"status": "ok"}
+
 @app.get("/tts-auto")
 def tts_auto(text: str = Query(..., description="Text to convert to speech")):
     try:
